@@ -68,7 +68,9 @@ async function startServer() {
     credentials: true,
   }));
 
-  // ---------------- AUTH ROUTES ----------------
+ app.get('/health', (req: Request, res: Response) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });  // ---------------- AUTH ROUTES ----------------
   app.post('/api/auth/signup', asyncHandler(async (req: Request, res: Response) => {
     try {
       const { name, email, password } = req.body;
