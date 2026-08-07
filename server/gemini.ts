@@ -23,7 +23,7 @@ function getGeminiClient(): GoogleGenAI | null {
  */
 export async function parseExpenseWithGemini(userText: string) {
   const ai = getGeminiClient();
-  const categories = db.getCategories();
+  const categories = await db.getCategories();
   const todayStr = new Date().toISOString().split('T')[0];
 
   const categoriesFormatted = categories
@@ -208,15 +208,15 @@ export async function answerExpenseQueryWithGemini(
     };
   }
 
-  const ai = getGeminiClient();
-  const transactions = db.getTransactions(userId);
-  const subscriptions = db.getSubscriptions(userId);
-  const goals = db.getGoals(userId);
-  const todos = db.getTodos(userId);
-  const lendings = db.getLendings(userId);
-  const categories = db.getCategories();
-  const user = db.findUserById(userId);
-  const todayStr = new Date().toISOString().split('T')[0];
+ const ai = getGeminiClient();
+  const transactions = await db.getTransactions(userId);     
+  const subscriptions = await db.getSubscriptions(userId);   
+  const goals = await db.getGoals(userId);                   
+  const todos = await db.getTodos(userId);                   
+  const lendings = await db.getLendings(userId);             
+  const categories = await db.getCategories();               
+  const user = await db.findUserById(userId);                
+  const todayStr = new Date().toISOString().split('T')[0];;
 
   const totalSpend = transactions.reduce((sum, t) => sum + t.amount, 0);
 

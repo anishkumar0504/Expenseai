@@ -61,23 +61,20 @@ export function computeSubsequentBillingDate(billingDay: number, currentBillingD
  * Daily subscription auto-billing worker.
  * Idempotent: safe to run multiple times per day.
  */
-export function runAutoBillingJob(): { billedCount: number; details: string[] } {
+export async function runAutoBillingJob(): Promise<{ billedCount: number; details: string[] }> {
   const todayStr = new Date().toISOString().split('T')[0];
-  const activeSubs = db.getAllActiveSubscriptions();
+  const activeSubs = await db.getAllActiveSubscriptions();   // ✅ await added
 
   let billedCount = 0;
   const details: string[] = [];
 
   for (const sub of activeSubs) {
-    // Check if next billing date has arrived or passed
     if (sub.nextBillingDate <= todayStr) {
-      // Idempotency check: guard against double billing for the exact same billing date
       if (sub.lastBilledDate === sub.nextBillingDate) {
         continue;
       }
 
-      // 1. Create auto-billed Transaction
-      const createdTx = db.createTransaction({
+      const createdTx = await db.createTransaction({           // ✅ also needs await
         userId: sub.userId,
         categoryId: sub.categoryId,
         subcategoryId: sub.subcategoryId,
@@ -88,11 +85,9 @@ export function runAutoBillingJob(): { billedCount: number; details: string[] } 
         tags: ['subscription', 'auto'],
       });
 
-      // 2. Compute subsequent billing date
       const subsequentNextDate = computeSubsequentBillingDate(sub.billingDay, sub.nextBillingDate);
 
-      // 3. Update subscription lastBilledDate & nextBillingDate
-      db.updateSubscription(sub.id, sub.userId, {
+      await db.updateSubscription(sub.id, sub.userId, {         // ✅ also needs await
         lastBilledDate: sub.nextBillingDate,
         nextBillingDate: subsequentNextDate,
       });
@@ -109,25 +104,18 @@ export function runAutoBillingJob(): { billedCount: number; details: string[] } 
  * Initializes auto-billing timer (runs once on server start and then every 6 hours).
  */
 export function initAutoBillingCron() {
-  // Run once immediately on start
-  try {
-    const res = runAutoBillingJob();
-    if (res.billedCount > 0) {
-      console.log(`[Auto-Billing Cron] Processed ${res.billedCount} subscriptions:`, res.details);
-    }
-  } catch (err) {
-    console.error('[Auto-Billing Cron Error]', err);
-  }
-
-  // Schedule to run every 6 hours
-  setInterval(() => {
+  const runJob = async () => {
     try {
-      const res = runAutoBillingJob();
+      const res = await runAutoBillingJob();          // ✅ await
       if (res.billedCount > 0) {
         console.log(`[Auto-Billing Cron] Processed ${res.billedCount} subscriptions:`, res.details);
       }
     } catch (err) {
       console.error('[Auto-Billing Cron Error]', err);
     }
-  }, 6 * 60 * 60 * 1000);
+  };
+
+  runJob(); // run once immediately on start
+
+  setInterval(runJob, 6 * 60 * 60 * 1000);
 }
