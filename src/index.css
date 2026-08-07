@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #000000;
+    color: #FFFFFF;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+/* Flat Charcoal #121212 Cards with Crisp Borders */
+.glass-card {
+  background: #121212;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.875rem; /* 14px */
+  box-shadow: none;
+}
+
+.glass-card-hover {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.glass-card-hover:hover {
+  background: #181818;
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: none;
+  transform: none;
+}
+
+.glass-modal {
+  background: #121212;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.875rem;
+  box-shadow: none;
+}
+
+.glass-input {
+  background: #181818;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  border-radius: 0.75rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.glass-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: none;
+  background: #1F1F1F;
+}
+
+/* Zero Glow Shadows */
+.glow-violet,
+.glow-cyan,
+.glow-emerald,
+.glow-coral,
+.glow-amber {
+  box-shadow: none !important;
+}
+
+/* Monochrome Buttons & Accent Styles */
+.gradient-positive {
+  background: #FFFFFF;
+  color: #000000;
+}
+
+.gradient-spend {
+  background: #262626;
+  color: #FFFFFF;
+}
+
+.text-gradient-positive,
+.text-gradient-spend {
+  color: #FFFFFF;
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Shimmer Animation for Skeleton */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+

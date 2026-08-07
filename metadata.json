@@ -1,0 +1,6 @@
+{
+  "name": "ExpenseAI",
+  "description": "Premium pitch-black AI-powered personal finance manager with smart expense tracking, budget management, subscription billing, lending tracker, and Gemini assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
