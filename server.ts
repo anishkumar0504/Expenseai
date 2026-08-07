@@ -833,12 +833,10 @@ const result = await answerExpenseQueryWithGemini(req.userId!, question, history
     res.status(500).json({ error: 'Internal server error' });
   });
 
-  app.listen(PORT, HOST, () => {
-    console.log(`🚀 Personal Finance Server running on http://${HOST}:${PORT}`);
-    initAutoBillingCron();
-  });
-}
-
+ app.listen(PORT, HOST, () => {
+  console.log(`🚀 Personal Finance Server running on http://${HOST}:${PORT}`);
+  initAutoBillingCron();
+});
 }
 
 startServer();
