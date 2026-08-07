@@ -72,6 +72,8 @@ async function startServer() {
       'https://expenseai-e3sq.onrender.com',
       'http://localhost:5173',
       'http://localhost:3000',
+        'https://expenseai.iamanish.in',      // ← ADD THIS
+
     ];
     
     if (allowed.includes(origin)) {
