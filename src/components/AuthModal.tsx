@@ -40,6 +40,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
       const res = await apiFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // ← REQUIRED
+
         body: JSON.stringify(payload),
       });
 

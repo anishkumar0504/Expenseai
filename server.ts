@@ -64,10 +64,26 @@ async function startServer() {
   app.use(express.json());
 
     app.use(cors({
-  origin: 'https://expenseai-e3sq.onrender.com', // or your frontend URL if different
-  credentials: true,                              // REQUIRED if you send cookies/auth headers
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: (origin, callback) => {
+    // Allow same-origin, mobile apps, curl (no origin header)
+    if (!origin) return callback(null, true);
+    
+    const allowed = [
+      'https://expenseai-e3sq.onrender.com',
+      'http://localhost:5173',
+      'http://localhost:3000',
+    ];
+    
+    if (allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 
  app.get('/health', (req: Request, res: Response) => {
