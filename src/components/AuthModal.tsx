@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext.js';
 import { GoogleLogin } from '@react-oauth/google'; // <-- ADD THIS
 import { Lock, Mail, User as UserIcon, ArrowRight, ShieldCheck, X } from 'lucide-react';
+import { apiFetch } from '../lib/api.js';
 
 interface AuthModalProps {
   onClose?: () => void;
@@ -36,7 +37,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
       const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
       const payload = isSignUp ? { name, email, password } : { email, password };
 
-      const res = await fetch(endpoint, {
+      const res = await apiFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -60,11 +61,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
     setError('');
     try {
       // 1. Get CSRF state token
-      const csrfRes = await fetch('/api/auth/google/csrf-token');
+      const csrfRes = await apiFetch('/api/auth/google/csrf-token');
       const { stateToken } = await csrfRes.json();
 
       // 2. Send real Google credential to backend
-      const res = await fetch('/api/auth/google', {
+      const res = await apiFetch('/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

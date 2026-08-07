@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useFinanceStore } from '../store/useFinanceStore.js';
 import { ChatMessage, ProposedAiAction } from '../types.js';
 import { Sparkles, Send, Check, X, Bot, User, CheckCircle2, AlertCircle, Mic, MicOff } from 'lucide-react';
+import { apiFetch } from '../lib/api.js';
 
 export const GeminiExpenseChatbot: React.FC = () => {
   const { executeAiAction } = useFinanceStore();
@@ -57,7 +58,7 @@ export const GeminiExpenseChatbot: React.FC = () => {
 
     try {
       const token = localStorage.getItem('pfinance_token') || 'demo_guest_token';
-      const res = await fetch('/api/gemini/chat-qa', {
+      const res = await apiFetch('/api/gemini/chat-qa', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

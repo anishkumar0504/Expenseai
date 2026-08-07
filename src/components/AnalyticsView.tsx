@@ -15,6 +15,7 @@ import {
   Bar,
 } from 'recharts';
 import { BarChart3, TrendingUp, Calendar, Tag, AlertCircle, RefreshCw } from 'lucide-react';
+import { apiFetch } from '../lib/api.js';
 
 interface AnalyticsViewProps {
   token: string;
@@ -28,7 +29,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ token }) => {
   const fetchAnalytics = async (selectedRange: 'weekly' | 'monthly' | 'yearly') => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/analytics?range=${selectedRange}`, {
+      const res = await apiFetch(`/api/analytics?range=${selectedRange}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {

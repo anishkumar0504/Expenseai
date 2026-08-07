@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { Transaction, Category } from '../types.js';
 import { FileSpreadsheet, Download, Upload, X, Check, AlertCircle, Sparkles } from 'lucide-react';
+import { apiFetch } from '../lib/api.js';
 
 interface ExcelImportExportModalsProps {
   token: string;
@@ -125,7 +126,7 @@ export const ExcelImportExportModals: React.FC<ExcelImportExportModalsProps> = (
     });
 
     try {
-      const res = await fetch('/api/expenses/import-bulk', {
+      const res = await apiFetch('/api/expenses/import-bulk', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

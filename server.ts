@@ -8,9 +8,10 @@ import { calculateNextBillingDate, runAutoBillingJob, initAutoBillingCron } from
 import { parseExpenseWithGemini, answerExpenseQueryWithGemini } from './server/gemini.js';
 import { generateCsrfStateToken, verifyGoogleIdToken } from './server/googleAuth.js';
 import { User, PaymentMode, LendingStatus } from './src/types.js';
+import cors from 'cors';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'personal_finance_app_jwt_secret_key_2026';
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 export interface AuthenticatedRequest extends Request {
   userId?: string;
@@ -61,6 +62,11 @@ const authenticateToken = asyncHandler(async (req: AuthenticatedRequest, res: Re
 async function startServer() {
   const app = express();
   app.use(express.json());
+
+    app.use(cors({
+    origin: process.env.FRONTEND_URL || '*',
+    credentials: true,
+  }));
 
   // ---------------- AUTH ROUTES ----------------
   app.post('/api/auth/signup', asyncHandler(async (req: Request, res: Response) => {

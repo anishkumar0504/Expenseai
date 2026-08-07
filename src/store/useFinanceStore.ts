@@ -11,6 +11,7 @@ import {
   PaymentMode,
   ProposedAiAction,
 } from '../types.js';
+import { apiFetch } from '../lib/api.js';
 
 const CACHE_KEY = 'pfinance_cache_v2';
 
@@ -150,7 +151,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
       const headers = { Authorization: `Bearer ${token}` };
 
       // Step A: Check server last modified timestamp
-      const checkRes = await fetch('/api/sync-check', { headers });
+      const checkRes = await apiFetch('/api/sync-check', { headers });
       if (checkRes.ok) {
         const { lastModifiedAt } = await checkRes.json();
         const currentLocal = get().lastSyncedAt;
@@ -163,7 +164,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
       }
 
       // Step B: Fetch full sync from server
-      const fullRes = await fetch('/api/full-sync', { headers });
+      const fullRes = await apiFetch('/api/full-sync', { headers });
       if (fullRes.ok) {
         const data = await fullRes.json();
         const now = Date.now();
@@ -213,7 +214,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
         }
       }
 
-      const res = await fetch(`/api/categories/${categoryId}/subcategories`, {
+      const res = await apiFetch(`/api/categories/${categoryId}/subcategories`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -262,7 +263,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     try {
       const token = localStorage.getItem('pfinance_token') || 'demo_guest_token';
       const targetCatId = categoryId || 'cat_1';
-      await fetch(`/api/categories/${targetCatId}/subcategories/${subcategoryId}`, {
+      await apiFetch(`/api/categories/${targetCatId}/subcategories/${subcategoryId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -302,7 +303,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      const res = await fetch('/api/transactions', {
+      const res = await apiFetch('/api/transactions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -333,7 +334,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/transactions/${id}`, {
+      await apiFetch(`/api/transactions/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -356,7 +357,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/transactions/${id}`, {
+      await apiFetch(`/api/transactions/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -390,7 +391,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      const res = await fetch('/api/subscriptions', {
+      const res = await apiFetch('/api/subscriptions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -421,7 +422,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/subscriptions/${id}`, {
+      await apiFetch(`/api/subscriptions/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -444,7 +445,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/subscriptions/${id}`, {
+      await apiFetch(`/api/subscriptions/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -472,7 +473,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      const res = await fetch('/api/lendings', {
+      const res = await apiFetch('/api/lendings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -503,7 +504,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/lendings/${id}`, {
+      await apiFetch(`/api/lendings/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -526,7 +527,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/lendings/${id}`, {
+      await apiFetch(`/api/lendings/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -558,7 +559,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/lendings/${id}/installment`, {
+      await apiFetch(`/api/lendings/${id}/installment`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -587,7 +588,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      const res = await fetch('/api/todos', {
+      const res = await apiFetch('/api/todos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -618,7 +619,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/todos/${id}`, {
+      await apiFetch(`/api/todos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -641,7 +642,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/todos/${id}`, {
+      await apiFetch(`/api/todos/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -669,7 +670,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      const res = await fetch('/api/goals', {
+      const res = await apiFetch('/api/goals', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -700,7 +701,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/goals/${id}`, {
+      await apiFetch(`/api/goals/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -723,7 +724,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch(`/api/goals/${id}`, {
+      await apiFetch(`/api/goals/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -743,7 +744,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     });
 
     try {
-      await fetch('/api/auth/budget', {
+      await apiFetch('/api/auth/budget', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

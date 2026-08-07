@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types.js';
 import { useFinanceStore } from '../store/useFinanceStore.js';
+import { apiFetch } from '../lib/api.js';
 
 interface AuthContextType {
   user: User | null;
@@ -32,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchUser = async (jwtToken: string) => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/me', {
+      const res = await apiFetch('/api/auth/me', {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },
@@ -77,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateUserBudget = async (newBudget: number | null) => {
     if (!token) return;
     try {
-      const res = await fetch('/api/auth/budget', {
+      const res = await apiFetch('/api/auth/budget', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
