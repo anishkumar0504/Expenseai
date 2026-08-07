@@ -40,6 +40,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
+
+      await useFinanceStore.getState().syncWithServer();
+
+
       } else {
         localStorage.removeItem('pfinance_token');
         setToken(null);
