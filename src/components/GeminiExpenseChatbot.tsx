@@ -37,7 +37,14 @@ export const GeminiExpenseChatbot: React.FC = () => {
 
     setInputText('');
 
-    const userMsg: ChatMessage = {
+     const history = messages
+      .filter((m) => m.id !== 'msg_welcome') // optional: skip welcome
+      .map((m) => ({
+        role: (m.sender === 'user' ? 'user' : 'model') as 'user' | 'model',
+        text: m.text,
+      }));
+
+   const userMsg: ChatMessage = {
       id: `msg_${Date.now()}`,
       sender: 'user',
       text: userQuery,
@@ -55,7 +62,7 @@ export const GeminiExpenseChatbot: React.FC = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ question: userQuery }),
+        body: JSON.stringify({ question: userQuery,history         }),
       });
 
       if (res.ok) {

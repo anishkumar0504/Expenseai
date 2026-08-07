@@ -780,13 +780,13 @@ async function startServer() {
 
   app.post('/api/gemini/chat-qa', authenticateToken, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { question } = req.body;
+    const { question, history } = req.body;   
       if (!question) {
         res.status(400).json({ error: 'Question prompt required' });
         return;
       }
 
-      const result = await answerExpenseQueryWithGemini(req.userId!, question);
+const result = await answerExpenseQueryWithGemini(req.userId!, question, history);
       res.json({ answer: result.text, proposedAction: result.proposedAction });
     } catch (err) {
       console.error('Chat Q&A error:', err);
