@@ -37,6 +37,7 @@ interface FinanceState {
   isLoading: boolean;
   isSyncing: boolean;
   error: string | null;
+  resetStore: () => void;
 
   // Actions
   initialize: () => Promise<void>;
@@ -871,4 +872,21 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     }
     return { success: false, message: 'Failed to execute proposed action.' };
   },
+    resetStore: () => {
+    localStorage.removeItem(CACHE_KEY);
+    set({
+      user: null,
+      categories: [],
+      transactions: [],
+      subscriptions: [],
+      lendings: [],
+      todos: [],
+      goals: [],
+      lastSyncedAt: 0,
+      isLoading: false,
+      isSyncing: false,
+      error: null,
+    });
+  },
+
 }));

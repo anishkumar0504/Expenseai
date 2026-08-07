@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types.js';
+import { useFinanceStore } from '../store/useFinanceStore.js';
 
 interface AuthContextType {
   user: User | null;
@@ -13,14 +14,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const DEMO_USER: User = {
-  id: 'usr_demo',
-  name: 'Alex Morgan',
-  email: 'alex@nexus.finance',
-  monthlyBudget: 3500,
-  createdAt: new Date().toISOString(),
-};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('pfinance_token') || null);
@@ -48,7 +41,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = await res.json();
         setUser(data.user);
       } else {
-        // Token is invalid or expired
         localStorage.removeItem('pfinance_token');
         setToken(null);
         setUser(null);
@@ -64,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = (newToken: string, newUser: User) => {
+    useFinanceStore.getState().resetStore();
     localStorage.setItem('pfinance_token', newToken);
     setToken(newToken);
     setUser(newUser);
@@ -71,8 +64,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('pfinance_token');
+    useFinanceStore.getState().resetStore();
     setToken(null);
     setUser(null);
+    window.location.reload();
   };
 
   const updateUserBudget = async (newBudget: number | null) => {
@@ -126,4 +121,3 @@ export const useAuth = () => {
   }
   return context;
 };
-

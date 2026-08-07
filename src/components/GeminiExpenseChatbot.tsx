@@ -17,6 +17,7 @@ export const GeminiExpenseChatbot: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [actionStatuses, setActionStatuses] = useState<Record<string, 'confirmed' | 'cancelled'>>({});
+  const [processingActions, setProcessingActions] = useState<Record<string, boolean>>({});
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -37,14 +38,14 @@ export const GeminiExpenseChatbot: React.FC = () => {
 
     setInputText('');
 
-     const history = messages
-      .filter((m) => m.id !== 'msg_welcome') // optional: skip welcome
+    const history = messages
+      .filter((m) => m.id !== 'msg_welcome')
       .map((m) => ({
         role: (m.sender === 'user' ? 'user' : 'model') as 'user' | 'model',
         text: m.text,
       }));
 
-   const userMsg: ChatMessage = {
+    const userMsg: ChatMessage = {
       id: `msg_${Date.now()}`,
       sender: 'user',
       text: userQuery,
@@ -62,7 +63,7 @@ export const GeminiExpenseChatbot: React.FC = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ question: userQuery,history         }),
+        body: JSON.stringify({ question: userQuery, history }),
       });
 
       if (res.ok) {
@@ -132,21 +133,41 @@ export const GeminiExpenseChatbot: React.FC = () => {
   };
 
   const handleConfirmAction = async (msgId: string, action: ProposedAiAction) => {
-    const result = await executeAiAction(action);
-    setActionStatuses((prev) => ({ ...prev, [msgId]: 'confirmed' }));
+    if (processingActions[msgId] || actionStatuses[msgId]) return;
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `msg_confirm_${Date.now()}`,
-        sender: 'bot',
-        text: result.message || 'Operation executed successfully!',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      },
-    ]);
+    setProcessingActions((prev) => ({ ...prev, [msgId]: true }));
+
+    try {
+      const result = await executeAiAction(action);
+      setActionStatuses((prev) => ({ ...prev, [msgId]: 'confirmed' }));
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `msg_confirm_${Date.now()}`,
+          sender: 'bot',
+          text: result.message || 'Operation executed successfully!',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
+    } catch (err) {
+      console.error('Action execution error:', err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `msg_err_${Date.now()}`,
+          sender: 'bot',
+          text: 'Failed to execute the action. Please try again.',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
+    } finally {
+      setProcessingActions((prev) => ({ ...prev, [msgId]: false }));
+    }
   };
 
   const handleCancelAction = (msgId: string) => {
+    if (processingActions[msgId]) return;
     setActionStatuses((prev) => ({ ...prev, [msgId]: 'cancelled' }));
   };
 
@@ -220,13 +241,15 @@ export const GeminiExpenseChatbot: React.FC = () => {
                     <div className="flex items-center gap-2 pt-1">
                       <button
                         onClick={() => handleConfirmAction(msg.id, msg.proposedAction!)}
-                        className="px-4 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-gray-200 transition-colors flex items-center gap-1.5"
+                        disabled={!!processingActions[msg.id]}
+                        className="px-4 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-gray-200 transition-colors flex items-center gap-1.5 disabled:opacity-40"
                       >
-                        <Check className="w-4 h-4" /> Confirm
+                        <Check className="w-4 h-4" /> {processingActions[msg.id] ? 'Processing...' : 'Confirm'}
                       </button>
                       <button
                         onClick={() => handleCancelAction(msg.id)}
-                        className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white text-xs font-semibold hover:bg-white/10 transition-colors flex items-center gap-1"
+                        disabled={!!processingActions[msg.id]}
+                        className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white text-xs font-semibold hover:bg-white/10 transition-colors flex items-center gap-1 disabled:opacity-40"
                       >
                         <X className="w-4 h-4" /> Cancel
                       </button>
@@ -317,4 +340,3 @@ export const GeminiExpenseChatbot: React.FC = () => {
     </div>
   );
 };
-
