@@ -275,16 +275,18 @@ export const GeminiExpenseChatbot: React.FC = () => {
           );
         })}
 
-        {isLoading && (
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/10 flex items-center justify-center text-white">
-              <Bot className="w-4 h-4 animate-spin" />
-            </div>
-            <div className="p-3.5 rounded-2xl bg-[#181818] border border-white/10 text-xs text-gray-400 animate-pulse">
-              ExpenseAI is parsing your request...
-            </div>
-          </div>
-        )}
+       {isLoading && (
+  <div className="flex items-center gap-3">
+    <div className="p-3.5 rounded-2xl bg-[#181818] border border-white/10 text-xs text-gray-400 flex items-center gap-3">
+      <div className="flex items-center gap-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+      </div>
+      <span>ExpenseAI is parsing your request...</span>
+    </div>
+  </div>
+)}
       </div>
 
       {/* Quick Prompt Chips */}
