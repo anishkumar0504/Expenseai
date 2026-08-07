@@ -64,9 +64,11 @@ async function startServer() {
   app.use(express.json());
 
     app.use(cors({
-    origin: process.env.FRONTEND_URL || '*',
-    credentials: true,
-  }));
+  origin: 'https://expenseai-e3sq.onrender.com', // or your frontend URL if different
+  credentials: true,                              // REQUIRED if you send cookies/auth headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
  app.get('/health', (req: Request, res: Response) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
